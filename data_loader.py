@@ -18,10 +18,15 @@ def load_data(url):
         quiet=False
     )
 
+    if csv_path is None:
+        raise RuntimeError("Не удалось скачать датасет")
+
     df = pd.read_csv(csv_path)
+
     return df
 
 if __name__ == "__main__":
+
     url = "https://drive.google.com/file/d/1iQYkrgc5OhsaYX8vjvhIg2rsRqweMSFE/view?usp=drive_link"
     df = load_data(url)
     print(df.head(10))
