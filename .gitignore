@@ -221,3 +221,4 @@ __marimo__/
 .idea/
 __pycache__/
 *.py[cod]
+data/
