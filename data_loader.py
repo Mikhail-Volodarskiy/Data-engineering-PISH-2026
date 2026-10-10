@@ -25,14 +25,15 @@ def load_data(url):
 
     return df
 
+
 def convert_types(df):
     """
     Приводит столбцы DataFrame к подходящим типам данных.
     На вход принимает DF
     """
 
-    df = df.convert_dtypes()
-    return df
+    return df.convert_dtypes()
+
 
 def save_to_parquet(df, path):
     """
