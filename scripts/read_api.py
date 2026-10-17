@@ -2,23 +2,29 @@ import requests
 import pandas as pd
 from pathlib import Path
 
-url = "https://iss.moex.com/iss/engines/stock/markets/shares/boards/TQBR/securities.json"
 
-response = requests.get(url)
-response.raise_for_status()
+def main():
+    url = "https://iss.moex.com/iss/engines/stock/markets/shares/boards/TQBR/securities.json"
 
-data = response.json()
+    response = requests.get(url, timeout=30)
+    response.raise_for_status()
 
-securities = data["securities"]
+    data = response.json()
 
-df = pd.DataFrame(
-    securities["data"],
-    columns=securities["columns"]
-)
+    securities = data["securities"]
 
-print(df.head(20))
+    df = pd.DataFrame(
+        securities["data"],
+        columns=securities["columns"]
+    )
 
-data_dir = Path(__file__).resolve().parent.parent / "data"
-data_dir.mkdir(exist_ok=True)
+    print(df.head(20))
 
-df.to_parquet(data_dir / "moex_securities.parquet", index=False)
+    data_dir = Path(__file__).resolve().parent.parent / "data"
+    data_dir.mkdir(exist_ok=True)
+
+    df.to_parquet(data_dir / "moex_securities.parquet", index=False)
+
+
+if __name__ == "__main__":
+    main()
