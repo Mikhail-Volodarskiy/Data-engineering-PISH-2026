@@ -12,7 +12,7 @@ def load_data(url):
     На вход подается ссылка на файл
     На выходе возвращается DataFrame
     """
-    DATA_DIR.mkdir(exist_ok=True)
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
 
     csv_path = gdown.download(
         url=url,
@@ -33,7 +33,6 @@ def convert_types(df):
     Приводит столбцы DataFrame к подходящим типам данных.
     На вход принимает DF
     """
-
     return df.convert_dtypes()
 
 
@@ -42,11 +41,13 @@ def save_to_parquet(df, path):
     Сохраняет DataFrame в формате Parquet.
     На вход принимает DF, path
     """
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+
     df.to_parquet(path, index=False)
 
 
 if __name__ == "__main__":
-
     url = "https://drive.google.com/file/d/1iQYkrgc5OhsaYX8vjvhIg2rsRqweMSFE/view?usp=drive_link"
 
     df = load_data(url)
