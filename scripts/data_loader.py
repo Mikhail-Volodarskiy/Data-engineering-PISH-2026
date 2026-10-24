@@ -3,18 +3,20 @@ import gdown
 import pandas as pd
 
 
+DATA_DIR = Path(__file__).resolve().parent.parent / "data"
+
+
 def load_data(url):
     """
     Загружает CSV-файл из Google Drive.
     На вход подается ссылка на файл
     На выходе возвращается DataFrame
     """
-    data_dir = Path(__file__).resolve().parent.parent / "data"
-    data_dir.mkdir(exist_ok=True)
+    DATA_DIR.mkdir(exist_ok=True)
 
     csv_path = gdown.download(
         url=url,
-        output=str(data_dir / "credit.csv"),
+        output=str(DATA_DIR / "credit.csv"),
         quiet=False
     )
 
@@ -42,6 +44,7 @@ def save_to_parquet(df, path):
     """
     df.to_parquet(path, index=False)
 
+
 if __name__ == "__main__":
 
     url = "https://drive.google.com/file/d/1iQYkrgc5OhsaYX8vjvhIg2rsRqweMSFE/view?usp=drive_link"
@@ -52,6 +55,4 @@ if __name__ == "__main__":
     print(df.head(10))
     print(df.dtypes)
 
-    data_dir = Path(__file__).resolve().parent.parent / "data"
-    save_to_parquet(df, data_dir / "credit.parquet")
-    
+    save_to_parquet(df, DATA_DIR / "credit.parquet")
