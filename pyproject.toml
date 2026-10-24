@@ -4,7 +4,11 @@ version = "0.1.0"
 requires-python = ">=3.12"
 dependencies = [
     "gdown>=6.4.1",
+    "ipykernel>=7.4.0",
+    "jupyter>=1.1.1",
+    "lab>=8.10",
     "pandas>=3.0.6",
     "pyarrow>=26.0.0",
     "requests>=2.34.2",
+    "seaborn>=0.13.2",
 ]

@@ -9,7 +9,7 @@ def load_data(url):
     На вход подается ссылка на файл
     На выходе возвращается DataFrame
     """
-    data_dir = Path("data")
+    data_dir = Path(__file__).resolve().parent.parent / "data"
     data_dir.mkdir(exist_ok=True)
 
     csv_path = gdown.download(
@@ -45,10 +45,13 @@ def save_to_parquet(df, path):
 if __name__ == "__main__":
 
     url = "https://drive.google.com/file/d/1iQYkrgc5OhsaYX8vjvhIg2rsRqweMSFE/view?usp=drive_link"
+
     df = load_data(url)
     df = convert_types(df)
 
     print(df.head(10))
     print(df.dtypes)
 
-    save_to_parquet(df, "data/credit.parquet")
+    data_dir = Path(__file__).resolve().parent.parent / "data"
+    save_to_parquet(df, data_dir / "credit.parquet")
+    
