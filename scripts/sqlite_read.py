@@ -1,11 +1,12 @@
 from pathlib import Path
-from sqlalchemy import create_engine, inspect, text
+from sqlalchemy import create_engine, inspect, text, URL
+from sqlalchemy.exc import NoResultFound
 
-#получаем путь к кредитам
+#получаем путь к базе
 BASE_DIR = Path(__file__).resolve().parent.parent
 db_path = BASE_DIR / "data" / "creds.db"
 
-#запускаем локально credits.db
+#подключаемся к локальной БД
 engine = create_engine(f"sqlite:///{db_path.as_posix()}")
 
 inspector = inspect(engine)
@@ -14,13 +15,35 @@ print("Таблицы:", inspector.get_table_names())
 columns = inspector.get_columns("access")
 for column in columns:
     print(column["name"], column["type"])
+try:
+    with engine.connect() as conn:
+        result = conn.execute(
+            text("""
+                SELECT url, port, user, pass, db_name
+                FROM access
+                WHERE user = :username AND db_name = :database
+            """),
+            {"username": "student", "database": "freezone"}
+        ).mappings().one()
+except NoResultFound:
+    raise RuntimeError(
+        "Нету записи для student/freezone"
+    ) from None
 
-with engine.connect() as conn:
-    result = conn.execute(
-        text("""
-            SELECT url, port, user, pass, db_name
-            FROM access
-            WHERE user = :username AND db_name = :database
-        """),
-        {"username": "student", "database": "freezone"}
-    ).mappings().one()
+db_url = URL.create(
+    drivername="postgresql+psycopg2",
+    username=result["user"],
+    password=result["pass"],
+    host=result["url"],
+    port=int(result["port"]),
+    database=result["db_name"]
+)
+
+remote_engine = create_engine(db_url)
+
+with remote_engine.connect() as conn:
+    database = conn.execute(
+        text("SELECT current_database()")
+    ).scalar_one()
+
+print("Подключение к базе:", database)

@@ -64,9 +64,9 @@ uv run python scripts/data_loader.py
 - DB_PASSWORD=
 - DB_NAME=homeworks
 
-Параметры подключения берутся из локальной sqlite базы creds.db
+Параметры подключения извлекаются из локальной базы creds.db с помощью `scripts/sqlite_read.py` и вручную указываются в файле .env.
 
-### Запустить запись:
+### Запись в PostgreSQL
 Скрипт scripts/write_to_db.py записывает первые 100 строк подготовленного датасета в таблицу volodarskiymo базы homeworks.
 
 Запуск:

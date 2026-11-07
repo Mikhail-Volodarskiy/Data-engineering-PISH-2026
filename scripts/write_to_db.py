@@ -5,6 +5,10 @@ from dotenv import load_dotenv
 from sqlalchemy import create_engine, text, URL
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+DATASET_FILE = "credit.parquet"
+TABLE_NAME = "volodarskiymo"
+ROWS_COUNT = 100
+TARGET_DB = "homeworks"
 load_dotenv(BASE_DIR / ".env")
 
 db_url = URL.create(
@@ -17,25 +21,21 @@ db_url = URL.create(
 )
 remote_engine = create_engine(db_url)
 
-with remote_engine.connect() as conn:
-    result = conn.execute(
-        text("SELECT current_database(), current_user")
-    )
-    print("Подключение:", result.fetchone())
 
-df = pd.read_parquet(BASE_DIR / "data" / "credit.parquet")
-df_100 = df.head(100)
+df = pd.read_parquet(BASE_DIR / "data" / DATASET_FILE)
+df_100 = df.head(ROWS_COUNT)
+
 
 with remote_engine.begin() as conn:
     database = conn.execute(
         text("SELECT current_database()")
     ).scalar_one()
 
-    if database != "homeworks":
-        raise RuntimeError("Подключение выполнено не к homeworks")
+    if database != TARGET_DB:
+        raise RuntimeError("Подключение не к homeworks")
 
     df_100.to_sql(
-        name="volodarskiymo",
+        name=TABLE_NAME,
         con=conn,
         if_exists="fail",
         index=False
@@ -45,7 +45,7 @@ print(database)
 
 with remote_engine.connect() as conn:
     count = conn.execute(
-        text("SELECT COUNT(*) FROM volodarskiymo")
+        text(f"SELECT COUNT(*) FROM {TABLE_NAME}")
     ).scalar_one()
 
 print(count)
