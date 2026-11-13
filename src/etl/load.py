@@ -1,5 +1,7 @@
 import os
+from functools import lru_cache
 from pathlib import Path
+
 import pandas as pd
 import sqlalchemy
 from dotenv import load_dotenv
@@ -12,7 +14,7 @@ MAX_ROWS = 100
 TARGET_DB = 'homeworks'
 load_dotenv(BASE_DIR / ".env")
 
-
+@lru_cache
 def get_engine() -> sqlalchemy.engine.base.Engine:
     '''
     Функция для подключения к БД

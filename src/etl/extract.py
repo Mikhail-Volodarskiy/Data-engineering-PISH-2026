@@ -15,14 +15,17 @@ def load_data(url: str = DATA_URL) -> pd.DataFrame:
     '''
     DATA_DIR.mkdir(parents=True, exist_ok=True)
 
-    csv_path = gdown.download(
-        url=url,
-        output=str(DATA_DIR / "credit.csv"),
-        quiet=False
-    )
+    csv_path = DATA_DIR / "credit.csv"
 
-    if csv_path is None:
-        raise RuntimeError("Не удалось скачать датасет")
+    if not csv_path.exists():
+        downloaded_path = gdown.download(
+            url=url,
+            output=str(csv_path),
+            quiet=False
+        )
+
+        if downloaded_path is None:
+            raise RuntimeError("Не удалось скачать датасет")
 
     df = pd.read_csv(csv_path)
 
