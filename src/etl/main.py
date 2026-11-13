@@ -43,5 +43,6 @@ def main(limit: int) -> None:
     )
     print('ETL-пайплайн завершен')
 
+
 if __name__ == '__main__':
     main()
